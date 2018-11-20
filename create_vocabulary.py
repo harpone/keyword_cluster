@@ -12,6 +12,7 @@ n_keywords = 25
 path_root = '/mnt/TERA/Data/reddit_topics'
 path_img_data = join(path_root, 'img_reddits.csv')
 
+print('Loading data...')
 df = pd.read_csv(path_img_data)
 
 df = df[['subreddit', 'submission_title']]
@@ -30,7 +31,7 @@ def lemmatizer(string):
 
     return lst
 
-
+print('Lemmatizing...')
 submission_titles = df['submission_title'].apply(lemmatizer)  # 1 min for 10k sentences!!
 df['submission_title'] = submission_titles
 
@@ -71,9 +72,10 @@ def count_words(lst_of_strs, top_n=10):
 top_all_words = []
 top_subreddit_words = dict()
 
+print('Counting words...')
 for index, row in top_kws.iterrows():
     # print(row.values)
-    cnts = count_words(row.values[0])
+    cnts = count_words(row.values[0], top_n=n_keywords)
     top_subreddit_words[index] = cnts
     # print(cnts)
     for word, _ in cnts.items():
@@ -85,5 +87,16 @@ for index, row in top_kws.iterrows():
 vocabulary = {word: k for k, word in enumerate(top_all_words)}
 
 # Save vocabulary as file:
+print('Saving vocabulary to file...')
 with open('vocabulary.json', 'w') as f:
     json.dump(vocabulary, f)
+
+
+print('Saving label dictionary to file...')
+label_dict = {label: n for n, label in enumerate(top_subreddits)}
+
+with open('label_dict.json', 'w') as f:
+    json.dump(label_dict, f)
+
+print('done.')
+
