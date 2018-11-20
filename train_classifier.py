@@ -60,7 +60,11 @@ try:
         for xs, ys in loader:
             model.train()
 
-            logits = model(xs)  # logit
+            # To GPU: TODO device agnostic? NO TIIIIIME!!!!
+            xs = xs.cuda()
+            ys = ys.cuda()
+
+            logits, _ = model(xs)  # logit
 
             # Optimize:
             loss = F.cross_entropy(logits, ys)
