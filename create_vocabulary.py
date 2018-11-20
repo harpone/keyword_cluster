@@ -7,7 +7,7 @@ import spacy
 
 
 min_posts = 100
-n_keywords = 25
+n_keywords = 10
 
 path_root = '/mnt/TERA/Data/reddit_topics'
 path_img_data = join(path_root, 'img_reddits.csv')
