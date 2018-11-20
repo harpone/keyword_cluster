@@ -18,7 +18,6 @@ data_path = '/mnt/TERA/Data/reddit_topics/img_reddits_processed.csv'
 vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
-# TODO: aaargh pretty slow... seems like the on-the-fly lemmatization etc preprocessing was a bad idea
 # TODO: predict
 # TODO: script for building embedding lookup table and testing with post input text
 # TODO: validation... or just tons of data
@@ -35,7 +34,6 @@ batch_size = 64
 max_iters = 10000
 eval_every = 100
 
-
 #### Dataset:
 dataset = RedditDataset(data_path=data_path,
                         vocabulary_path=vocabulary_path,
@@ -47,13 +45,11 @@ loader = DataLoader(dataset,
                     num_workers=8,
                     pin_memory=True)
 
-
 #### Model:
 model = ResNetFC(input_size=dataset.vocabulary_size,
                  hidden_size=hidden_size,
                  layers=layers,
                  output_size=dataset.num_labels).cuda()
-
 
 #### Optimizers:
 optimizer = optim.Adam(model.parameters(),
@@ -63,6 +59,11 @@ optimizer = optim.Adam(model.parameters(),
 # Load/save:
 save_path = join('results', run_name)
 
+# Save hyperparameters:
+hparams = dict(input_size=dataset.vocabulary_size,
+               hidden_size=hidden_size,
+               layers=layers,
+               output_size=dataset.num_labels)
 
 # Instantiate SummaryWriter:
 writer = SummaryWriter(save_path)
@@ -96,7 +97,7 @@ try:
             if global_step % eval_every == 0:
                 model.eval()
 
-                #hs_val = model(xs_val)  # [1024, 1, 5, 1]  # TODO
+                # hs_val = model(xs_val)  # [1024, 1, 5, 1]  # TODO
 
                 # Save models checkpoints
                 torch.save(model.state_dict(), join(save_path, 'model.pth'))

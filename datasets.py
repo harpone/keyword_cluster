@@ -44,21 +44,23 @@ class RedditDataset(data.Dataset):
 
         # transforms:
         y = torch.tensor(self.label_dict[y], dtype=torch.int64)  # str to int
-        x = self.lemmatize(x)
-        x = np.asarray(self.vectorizer.fit_transform([x]).todense())[0]
-        x = torch.tensor(x, dtype=torch.float32)
+        x = self.vectorize(x)
 
         return x, y
 
     def __len__(self):
         return len(self.xs)
 
-    def lemmatize(self, string):
+    def vectorize(self, string):
         lst = []
         doc = self.nlp(string)
         for token in doc:
             if not token.is_stop and token.is_alpha and token.lemma_ != '-PRON-':  # TODO: fix, dirty!
                 lst.append(token.lemma_)
 
-        return ' '.join(lst)
+        x = ' '.join(lst)
+        x = np.asarray(self.vectorizer.fit_transform([x]).todense())[0]
+        x = torch.tensor(x, dtype=torch.float32)
+
+        return x
 
