@@ -26,9 +26,11 @@ class RedditDataset(data.Dataset):
         self.xs = df.submission_title.values  # numpy array of strings
         self.ys = df.subreddit.values  # numpy array of strings
         vocabulary = json.loads(open(vocabulary_path).read())
+        self.vocabulary_size = len(vocabulary)
         self.nlp = spacy.load('en')
 
         self.label_dict = json.loads(open(label_dict_path).read())
+        self.num_labels = len(self.label_dict)
         self.vectorizer = CountVectorizer(vocabulary=vocabulary, dtype=np.int32)
 
     def __getitem__(self, index):

@@ -11,6 +11,7 @@ from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader, TensorDataset
 
 from datasets import RedditDataset
+from models import ResNetFC
 
 data_path = '/mnt/TERA/Data/reddit_topics/img_reddits.csv'
 vocabulary_path = './vocabulary.json'
@@ -18,8 +19,11 @@ label_dict_path = './label_dict.json'
 
 #### Hyperparameters:
 run_name = 'testrun'
+hidden_size = 128
+layers = 5
 lr = 3e-4
 batch_size = 64
+
 
 max_iters = 10000
 eval_every = 1000
@@ -35,7 +39,11 @@ loader = DataLoader(dataset,
                     pin_memory=True)
 
 
-#### Model:  # TODO
+#### Model:
+model = ResNetFC(input_size=dataset.vocabulary_size,
+                 hidden_size=hidden_size,
+                 layers=layers,
+                 output_size=dataset.num_labels).cuda()
 
 
 def loss_fn(xs_, ys_):  # TODO
