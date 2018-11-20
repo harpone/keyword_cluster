@@ -4,6 +4,7 @@ import torch.nn as nn
 import numpy as np
 import os
 from os.path import join
+import json
 import shutil
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
@@ -25,7 +26,7 @@ label_dict_path = './label_dict.json'
 
 
 #### Hyperparameters:
-run_name = 'testrun_bigger'
+run_name = 'testrun_smthn'
 hidden_size = 256
 layers = 10
 lr = 3e-4
@@ -59,14 +60,20 @@ optimizer = optim.Adam(model.parameters(),
 # Load/save:
 save_path = join('results', run_name)
 
+# Instantiate SummaryWriter:
+writer = SummaryWriter(save_path)
+
 # Save hyperparameters:
 hparams = dict(input_size=dataset.vocabulary_size,
                hidden_size=hidden_size,
                layers=layers,
-               output_size=dataset.num_labels)
+               output_size=dataset.num_labels,
+               data_path=data_path,
+               vocabulary_path=vocabulary_path,
+               label_dict_path=label_dict_path)
+with open(join(save_path, 'hparams.json'), 'w') as f:
+    json.dump(hparams, f)
 
-# Instantiate SummaryWriter:
-writer = SummaryWriter(save_path)
 global_step = 0
 try:
     while True:
