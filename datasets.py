@@ -43,9 +43,9 @@ class RedditDataset(data.Dataset):
         y = self.ys[index]
 
         # transforms:
-        y = self.label_dict[y]  # str to int
+        y = self.label_dict[y].cuda()  # str to int
         x = self.lemmatize(x)
-        x = np.asarray(self.vectorizer.fit_transform([x]).todense())[0]
+        x = np.asarray(self.vectorizer.fit_transform([x]).todense())[0].cuda()
 
         return x, y
 

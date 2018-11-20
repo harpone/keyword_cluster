@@ -6,6 +6,7 @@ import os
 from os.path import join
 import shutil
 import matplotlib.pyplot as plt
+import torch.nn.functional as F
 import itertools
 from tensorboardX import SummaryWriter
 from torch.utils.data import DataLoader, TensorDataset
@@ -26,7 +27,7 @@ batch_size = 64
 
 
 max_iters = 10000
-eval_every = 1000
+eval_every = 100
 
 #### Dataset:
 dataset = RedditDataset(data_path=data_path,
@@ -46,11 +47,6 @@ model = ResNetFC(input_size=dataset.vocabulary_size,
                  output_size=dataset.num_labels).cuda()
 
 
-def loss_fn(xs_, ys_):  # TODO
-
-    return
-
-
 #### Optimizers:
 optimizer = optim.Adam(model.parameters(),
                        lr=lr,
@@ -64,10 +60,10 @@ try:
         for xs, ys in loader:
             model.train()
 
-            hs = model(xs)  # logit
+            logits = model(xs)  # logit
 
             # Optimize:
-            loss = loss_fn(hs, ys)
+            loss = F.cross_entropy(logits, ys)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -79,7 +75,7 @@ try:
             if global_step % eval_every == 0:
                 model.eval()
 
-                hs_val = model(xs_val)  # [1024, 1, 5, 1]
+                #hs_val = model(xs_val)  # [1024, 1, 5, 1]  # TODO
 
 
             global_step += 1
