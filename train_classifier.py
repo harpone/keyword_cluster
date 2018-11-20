@@ -14,7 +14,7 @@ from torch.utils.data import DataLoader, TensorDataset
 from datasets import RedditDataset
 from models import ResNetFC
 
-data_path = '/mnt/TERA/Data/reddit_topics/img_reddits.csv'
+data_path = '/mnt/TERA/Data/reddit_topics/img_reddits_processed.csv'
 vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
@@ -36,7 +36,7 @@ dataset = RedditDataset(data_path=data_path,
 
 loader = DataLoader(dataset,
                     batch_size=batch_size,
-                    num_workers=4,
+                    num_workers=0,
                     pin_memory=True)
 
 

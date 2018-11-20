@@ -41,8 +41,6 @@ top_subreddits = df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts
 print(top_subreddits)
 
 df_top = df.loc[df.subreddit.isin(top_subreddits)]
-df_orig = df_orig.loc[df_orig.subreddit.isin(top_subreddits)]
-
 
 # top N most common keywords per subreddit:
 
@@ -93,10 +91,14 @@ with open('vocabulary.json', 'w') as f:
 
 
 print('Saving label dictionary to file...')
+df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()
 label_dict = {label: n for n, label in enumerate(top_subreddits)}
 
 with open('label_dict.json', 'w') as f:
     json.dump(label_dict, f)
+
+print('Processing dataset...')
+df_top.to_csv(join(path_root, 'img_reddits_processed.csv'), index=False)
 
 print('done.')
 

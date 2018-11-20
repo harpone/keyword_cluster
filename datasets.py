@@ -43,9 +43,10 @@ class RedditDataset(data.Dataset):
         y = self.ys[index]
 
         # transforms:
-        y = self.label_dict[y].cuda()  # str to int
+        y = torch.tensor(self.label_dict[y], dtype=torch.int64)  # str to int
         x = self.lemmatize(x)
-        x = np.asarray(self.vectorizer.fit_transform([x]).todense())[0].cuda()
+        x = np.asarray(self.vectorizer.fit_transform([x]).todense())[0]
+        x = torch.tensor(x, dtype=torch.float32)
 
         return x, y
 
