@@ -19,7 +19,6 @@ vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
 # TODO: aaargh pretty slow... seems like the on-the-fly lemmatization etc preprocessing was a bad idea
-# TODO: load/save
 # TODO: predict
 # TODO: script for building embedding lookup table and testing with post input text
 # TODO: validation... or just tons of data
@@ -61,9 +60,12 @@ optimizer = optim.Adam(model.parameters(),
                        lr=lr,
                        betas=(0.9, 0.999))
 
+# Load/save:
+save_path = join('results', run_name)
+
 
 # Instantiate SummaryWriter:
-writer = SummaryWriter(join('results', run_name))
+writer = SummaryWriter(save_path)
 global_step = 0
 try:
     while True:
@@ -96,6 +98,9 @@ try:
 
                 #hs_val = model(xs_val)  # [1024, 1, 5, 1]  # TODO
 
+                # Save models checkpoints
+                torch.save(model.state_dict(), join(save_path, 'model.pth'))
+                torch.save(optimizer.state_dict(), join(save_path, 'optimizer.pth'))
 
             global_step += 1
             if global_step >= max_iters:
