@@ -19,7 +19,7 @@ with open(path_data, 'r') as f:
             continue
         if any([x in lst[2] for x in image_types]):
             df.append(lst)
-        if len(df) > 10000:  # testing with a lot smaller dataset first
+        if len(df) > 100000:  # testing with a lot smaller dataset first
             break
 
 df = pd.DataFrame(df)

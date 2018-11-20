@@ -6,8 +6,8 @@ import json
 import spacy
 
 
-min_posts = 100
-n_keywords = 10
+min_posts = 100  # include only subreddits with at least this many posts in the training dataset
+n_keywords = 10  # how many most recurring keywords to keep
 
 path_root = '/mnt/TERA/Data/reddit_topics'
 path_img_data = join(path_root, 'img_reddits.csv')
@@ -50,6 +50,12 @@ top_kws = df_top.groupby('subreddit').sum()
 # Collect top words per subreddit and total:
 
 def count_words(lst_of_strs, top_n=10):
+    """
+
+    :param lst_of_strs:
+    :param top_n: top n keywords to keep
+    :return:
+    """
     # print(lst_of_strs)
     word_counts = dict()
     for word in lst_of_strs:
