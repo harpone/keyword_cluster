@@ -19,6 +19,7 @@ data_path = '/mnt/TERA/Data/reddit_topics/img_reddits_processed.csv'
 vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
+# TODO: create large dataset and train
 # TODO: predict
 # TODO: script for building embedding lookup table and testing with post input text
 # TODO: validation... or just tons of data
