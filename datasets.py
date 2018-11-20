@@ -14,8 +14,9 @@ import json
 
 class RedditDataset(data.Dataset):
     """Dataset consisting a Pandas dataframe with columns `subreddit` and `submission_title`,
-    applying lemmatization etc on the fly (maybe not very efficient, but can also be used
-    in test/eval phase and makes debugging easier).
+    applying lemmatization etc on the fly. Maybe not very efficient, but can also be used
+    in test/eval phase and makes debugging easier. Also using higher number of workers in the
+    loader should mitigate preprocessing slowness.
     """
 
     def __init__(self, data_path=None, vocabulary_path=None, label_dict_path=None):
@@ -47,7 +48,6 @@ class RedditDataset(data.Dataset):
         return x, y
 
     def __len__(self):
-
         return len(self.xs)
 
     def lemmatize(self, string):
