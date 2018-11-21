@@ -21,6 +21,7 @@ data_path = '/mnt/TERA/Data/reddit_topics/img_reddits_processed.csv'
 vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
+# TODO: actually combine `build_embedding_lookup` and `find_similar` s.t. will build embeddings if build=True?
 # TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
 # TODO: script for building embedding lookup table and testing with post input text
 # TODO: CLI instead of hard coded args

@@ -34,7 +34,7 @@ class RedditDataset(data.Dataset):
         """
 
         :param index: int
-        :return: tuple x, y; x.shape = [len(vocabulary), ]; y=int
+        :return tuple x, y: x.shape = [len(vocabulary), ]; y=int
         """
         x = self.xs[index]
         y = self.ys[index]
@@ -49,6 +49,11 @@ class RedditDataset(data.Dataset):
         return len(self.xs)
 
     def vectorize(self, string):
+        """
+
+        :param string: just a (unicode) string
+        :return x: torch.tensor of shape [len(vocabulary), ]
+        """
         lst = []
         doc = self.nlp(string)
         for token in doc:
