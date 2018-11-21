@@ -5,6 +5,11 @@ from os.path import join
 import json
 import spacy
 
+"""
+NOTES:
+- 1M first posts have 6223 unique subreddits
+"""
+
 
 min_posts = 100  # include only subreddits with at least this many posts in the training dataset
 n_keywords = 10  # how many most recurring keywords to keep per subreddit
@@ -32,14 +37,13 @@ def lemmatizer(string):
 
     return lst
 
-print('Lemmatizing...')
-submission_titles = df['submission_title'].apply(lemmatizer)  # 1 min for 10k sentences!!
-df['submission_title'] = submission_titles
-
-
 # only subreddits with > min_posts posts:
 top_subreddits = df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()
 print(top_subreddits)
+
+print('Lemmatizing...')
+submission_titles = df['submission_title'].apply(lemmatizer)  # 1 min for 10k sentences!!
+df['submission_title'] = submission_titles
 
 df_top = df.loc[df.subreddit.isin(top_subreddits)]
 
