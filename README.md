@@ -1,7 +1,7 @@
 # Similarity search for Reddit topics
 
 Idea is to train a classifier to predict the subreddit based on the 
-title text, and then to use the classifier near-top 
+title text, and then to use the classifier's near-top 
 layer as an embedding and to measure similarity between titles
 by nearest neighbor distance in the embedding space.
 
@@ -20,6 +20,6 @@ the arguments.
 * then `create_vocabulary.py` will dump the vocabulary and label dictionary as json files to project root
 * then `train_classifier.py`
 * then run `build_embedding_lookup.py`, which will include the 
-embeddin vectors in the dataset (NOT DONE YET)
+embedding vectors in the dataset (NOT DONE YET)
 * then run `find_similar.py` to find top-n most similar posts
 (NOT DONE YET)
