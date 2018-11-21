@@ -14,6 +14,7 @@ class ResNetFC(nn.Module):
     def __init__(self,
                  input_size=1,
                  hidden_size=1,
+                 embedding_size=1,
                  output_size=1,
                  layers=1,
                  activation=nn.ReLU()):
@@ -25,7 +26,8 @@ class ResNetFC(nn.Module):
         for l in range(layers):
             res_layers.append(nn.Linear(hidden_size, hidden_size))
         self.res_layers = nn.ModuleList(res_layers)
-        self.post_layer = nn.Linear(hidden_size, output_size)
+        self.embedding_layer = nn.Linear(hidden_size, embedding_size)
+        self.post_layer = nn.Linear(embedding_size, output_size)
         self.act = activation
 
     def forward(self, x):
@@ -40,5 +42,6 @@ class ResNetFC(nn.Module):
         h = self.act(h)
         for fn in self.res_layers:
             h = h + self.act(fn(h))
-        logit = self.post_layer(h)
-        return logit, h
+        embedding = self.embedding_layer(h)
+        logit = self.post_layer(embedding)
+        return logit, embedding

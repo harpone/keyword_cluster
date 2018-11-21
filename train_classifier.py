@@ -29,6 +29,7 @@ label_dict_path = './label_dict.json'
 #### Hyperparameters:
 run_name = 'testrun_smthn'
 hidden_size = 512
+embedding_size = 64
 layers = 5
 lr = 3e-4
 batch_size = 64
@@ -66,6 +67,7 @@ loader_val = torch.utils.data.DataLoader(dataset,
 #### Model:
 model = ResNetFC(input_size=dataset.vocabulary_size,
                  hidden_size=hidden_size,
+                 embedding_size=embedding_size,
                  layers=layers,
                  output_size=dataset.num_labels).cuda()
 
