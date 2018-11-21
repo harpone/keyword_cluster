@@ -9,27 +9,26 @@ from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
 
-
-lemmatizer = WordNetLemmatizer()
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
-stopwords = set(stopwords.words('english'))
-
-
 """
 NOTES:
 - 1M first posts: number of subreddits with > 100 posts = 62
 - 10M first posts: number of subreddits with > 100 posts = 273; about 500k posts
 """
 
-
 min_posts = 100  # include only subreddits with at least this many posts in the training dataset
 n_keywords = 10  # how many most recurring keywords to keep per subreddit
-nrows = 10000000
+nrows = 1000000
 
 path_root = '/mnt/TERA/Data/reddit_topics'
+output_filename = 'img_reddits_processed_1M.csv'
 path_img_data = join(path_root, 'img_reddits.csv')
+
+# Lemmatizer stuff:
+lemmatizer = WordNetLemmatizer()
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
+stopwords = set(stopwords.words('english'))
 
 print('Loading data...')
 df = pd.read_csv(path_img_data, nrows=nrows)
@@ -124,7 +123,7 @@ with open('label_dict.json', 'w') as f:
     json.dump(label_dict, f)
 
 print('Processing dataset...')
-df_top.to_csv(join(path_root, 'img_reddits_processed.csv'), index=False)
+df_top.to_csv(join(path_root, output_filename), index=False)
 
 print('done.')
 
