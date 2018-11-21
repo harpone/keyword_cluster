@@ -22,12 +22,10 @@ vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
 # TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
-# TODO: maybe Dice score; check imbalance
 # TODO: predict
 # TODO: script for building embedding lookup table and testing with post input text
 # TODO: CLI instead of hard coded args
 # TODO: count vector normalization?
-
 
 #### Hyperparameters:
 run_name = 'testrun_smthn'
