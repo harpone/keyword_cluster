@@ -122,7 +122,7 @@ try:
             print(f'\r iter: {global_step} loss={np.round(loss.item(), 4)}', end='')
 
             if global_step % eval_every == 0:
-                for xs_val, ys_val in loader_val:  # TODO: assert 1 minibatch or support for several mbs
+                for xs_val, ys_val in loader_val:
                     model.eval()
 
                     # To GPU:
@@ -138,15 +138,19 @@ try:
                     acc_val = (ys_val == preds_val).float().mean()
 
                     # F1-score:
-                    f1_score = f1_score(preds_val.cpu().numpy(), ys_val.cpu().numpy(), average='micro')
+                    preds_val_np = preds_val.cpu().numpy()
+                    ys_val_np = ys_val.cpu().numpy()
+                    f1_val = f1_score(preds_val_np, ys_val_np, average='micro')
 
                     writer.add_scalar('val/loss', loss_val, global_step)
                     writer.add_scalar('val/acc', acc_val, global_step)
-                    writer.add_scalar('val/f1_score', f1_score, global_step)
+                    writer.add_scalar('val/f1_score', f1_val, global_step)
 
                     # Save models checkpoints
                     torch.save(model.state_dict(), join(save_path, 'model.pth'))
                     torch.save(optimizer.state_dict(), join(save_path, 'optimizer.pth'))
+
+                    break  # TODO: hack to stop after one mb; maybe re-think
 
             global_step += 1
             if global_step >= max_iters:
