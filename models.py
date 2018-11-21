@@ -1,16 +1,7 @@
 import matplotlib.pyplot as plt
 from os.path import join
-import torch.utils.data
-from sklearn.decomposition import PCA
-import torch.optim as optim
-from termcolor import colored
-import itertools
-from tensorboardX import SummaryWriter
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.nn.utils import clip_grad_norm_, clip_grad_value_
-from torch.utils.data import DataLoader, TensorDataset
-from torch import save
 
 
 class ResNetFC(nn.Module):

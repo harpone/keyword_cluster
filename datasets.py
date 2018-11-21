@@ -1,13 +1,10 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import torch.utils.data as data
-from torchvision.datasets.mnist import read_label_file, read_image_file
 import os
 from sklearn.feature_extraction.text import CountVectorizer
 import pandas as pd
-import os.path
 import spacy
-import errno
 import torch
 import json
 

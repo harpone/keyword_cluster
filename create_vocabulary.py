@@ -26,6 +26,10 @@ df = df[['subreddit', 'submission_title']]
 
 nlp = spacy.load('en')
 
+# only subreddits with > min_posts posts:
+top_subreddits = df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()
+print(top_subreddits)
+df_top = df.loc[df.subreddit.isin(top_subreddits)]
 
 def lemmatizer(string):
     lst = []
@@ -35,11 +39,6 @@ def lemmatizer(string):
             lst.append(token.lemma_)
 
     return lst
-
-# only subreddits with > min_posts posts:
-top_subreddits = df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()
-print(top_subreddits)
-df_top = df.loc[df.subreddit.isin(top_subreddits)]
 
 print('Lemmatizing...')
 submission_titles = df_top['submission_title'].apply(lemmatizer)  # 1 min for 10k sentences!!

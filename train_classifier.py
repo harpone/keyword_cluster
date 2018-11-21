@@ -8,9 +8,11 @@ import json
 import shutil
 import matplotlib.pyplot as plt
 import torch.nn.functional as F
+from sklearn.metrics import f1_score
 import itertools
 from tensorboardX import SummaryWriter
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader
+from torch.utils.data.sampler import SubsetRandomSampler
 
 from datasets import RedditDataset
 from models import ResNetFC
@@ -19,7 +21,6 @@ data_path = '/mnt/TERA/Data/reddit_topics/img_reddits_processed.csv'
 vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
-# TODO: validation set + loss, acc, dice
 # TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
 # TODO: maybe Dice score; check imbalance
 # TODO: predict
@@ -34,7 +35,9 @@ hidden_size = 256
 layers = 10
 lr = 3e-4
 batch_size = 64
+seed = 1  # numpy seed for train/val split
 
+validation_size = 128  # assuming for now that entire validation set in one minibatch
 max_iters = 10000
 eval_every = 100
 
@@ -43,11 +46,25 @@ dataset = RedditDataset(data_path=data_path,
                         vocabulary_path=vocabulary_path,
                         label_dict_path=label_dict_path)
 
-loader = DataLoader(dataset,
-                    shuffle=True,
-                    batch_size=batch_size,
-                    num_workers=8,
-                    pin_memory=True)
+np.random.seed(seed)
+dataset_size = len(dataset)
+index = np.arange(dataset_size)
+np.random.shuffle(index)
+index_trn = index[:-validation_size]
+index_val = index[-validation_size:]
+
+sampler_trn = SubsetRandomSampler(index_trn)
+sampler_val = SubsetRandomSampler(index_val)
+
+loader_trn = torch.utils.data.DataLoader(dataset,
+                                         batch_size=batch_size,
+                                         sampler=sampler_trn,
+                                         num_workers=8,
+                                         pin_memory=True)
+
+loader_val = torch.utils.data.DataLoader(dataset,
+                                         batch_size=validation_size,
+                                         sampler=sampler_val)
 
 #### Model:
 model = ResNetFC(input_size=dataset.vocabulary_size,
@@ -80,10 +97,10 @@ with open(join(save_path, 'hparams.json'), 'w') as f:
 global_step = 0
 try:
     while True:
-        for xs, ys in loader:
+        for xs, ys in loader_trn:
             model.train()
 
-            # To GPU: TODO device agnostic? NO TIIIIIME!!!!
+            # To GPU:
             xs = xs.cuda()
             ys = ys.cuda()
 
@@ -105,13 +122,31 @@ try:
             print(f'\r iter: {global_step} loss={np.round(loss.item(), 4)}', end='')
 
             if global_step % eval_every == 0:
-                model.eval()
+                for xs_val, ys_val in loader_val:  # TODO: assert 1 minibatch or support for several mbs
+                    model.eval()
 
-                # hs_val = model(xs_val)  # [1024, 1, 5, 1]  # TODO
+                    # To GPU:
+                    xs_val = xs_val.cuda()
+                    ys_val = ys_val.cuda()
 
-                # Save models checkpoints
-                torch.save(model.state_dict(), join(save_path, 'model.pth'))
-                torch.save(optimizer.state_dict(), join(save_path, 'optimizer.pth'))
+                    logits_val, _ = model(xs_val)
+
+                    loss_val = F.cross_entropy(logits_val, ys_val)
+
+                    # Accuracy:
+                    preds_val = torch.argmax(logits_val, dim=1)
+                    acc_val = (ys_val == preds_val).float().mean()
+
+                    # F1-score:
+                    f1_score = f1_score(preds_val.cpu().numpy(), ys_val.cpu().numpy(), average='micro')
+
+                    writer.add_scalar('val/loss', loss_val, global_step)
+                    writer.add_scalar('val/acc', acc_val, global_step)
+                    writer.add_scalar('val/f1_score', f1_score, global_step)
+
+                    # Save models checkpoints
+                    torch.save(model.state_dict(), join(save_path, 'model.pth'))
+                    torch.save(optimizer.state_dict(), join(save_path, 'optimizer.pth'))
 
             global_step += 1
             if global_step >= max_iters:
