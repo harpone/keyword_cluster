@@ -24,7 +24,6 @@ label_dict_path = './label_dict.json'
 # TODO: script for building embedding lookup table and testing with post input text
 # TODO: validation... or just tons of data
 # TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
-# TODO: requirements.txt
 # TODO: CLI instead of hard coded args
 # TODO: count vector normalization?
 # TODO: maybe Dice score; check imbalance

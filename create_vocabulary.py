@@ -7,13 +7,14 @@ import spacy
 
 
 min_posts = 100  # include only subreddits with at least this many posts in the training dataset
-n_keywords = 10  # how many most recurring keywords to keep
+n_keywords = 10  # how many most recurring keywords to keep per subreddit
+nrows = 1000000
 
 path_root = '/mnt/TERA/Data/reddit_topics'
 path_img_data = join(path_root, 'img_reddits.csv')
 
 print('Loading data...')
-df = pd.read_csv(path_img_data)
+df = pd.read_csv(path_img_data, nrows=nrows)
 
 df = df[['subreddit', 'submission_title']]
 df_orig = df.copy()
@@ -43,12 +44,9 @@ print(top_subreddits)
 df_top = df.loc[df.subreddit.isin(top_subreddits)]
 
 # top N most common keywords per subreddit:
-
 top_kws = df_top.groupby('subreddit').sum()
 
-
 # Collect top words per subreddit and total:
-
 def count_words(lst_of_strs, top_n=10):
     """
 
@@ -94,7 +92,6 @@ vocabulary = {word: k for k, word in enumerate(top_all_words)}
 print('Saving vocabulary to file...')
 with open('vocabulary.json', 'w') as f:
     json.dump(vocabulary, f)
-
 
 print('Saving label dictionary to file...')
 df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()
