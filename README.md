@@ -30,3 +30,5 @@ which can be a bit slow... the point with this is that 1) it makes
 dataset issues easy to debug by seeing the actual text/labels e.g.
 in the debugger and 2) the dataset's `.vectorize` method can be
 used also in the nn search phase
+* Warning: `allennlp` seems to screw up stuff, such as matplotlib
+imports and it requires certain versions of other packages...

@@ -14,10 +14,10 @@ NOTES:
 - 1M first posts: number of subreddits with > 100 posts = 62
 - 10M first posts: number of subreddits with > 100 posts = 273; about 500k posts
 """
-
+# TODO: top k words is now the bottleneck!
 min_posts = 100  # include only subreddits with at least this many posts in the training dataset
 n_keywords = 10  # how many most recurring keywords to keep per subreddit
-nrows = 1000000
+nrows = 10000
 
 path_root = '/mnt/TERA/Data/reddit_topics'
 output_filename = 'img_reddits_processed_1M.csv'
@@ -66,7 +66,7 @@ submission_titles = df_top['submission_title'].apply(lemmatize)  # 1 min for 10k
 df_top['submission_title'] = submission_titles
 
 # top N most common keywords per subreddit:
-top_kws = df_top.groupby('subreddit').sum()
+top_kws = df_top.groupby('subreddit').sum()  # slooow!
 
 # Collect top words per subreddit and total:
 def count_words(lst_of_strs, top_n=10):

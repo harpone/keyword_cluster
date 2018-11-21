@@ -21,7 +21,7 @@ Load a trained model, push dataset through it and save the embeddings together w
 save_path = 'results/testrun'
 
 # Load model hyperparameters:
-hparams = json.loads(open(save_path).read())
+hparams = json.loads(open(join(save_path, 'hparams.json')).read())
 
 # Define and load model:
 model = ResNetFC(input_size=hparams['input_size'],
