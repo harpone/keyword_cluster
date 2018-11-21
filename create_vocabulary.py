@@ -4,6 +4,18 @@ import pandas as pd
 from os.path import join
 import json
 import spacy
+import nltk
+from nltk.tokenize import sent_tokenize, word_tokenize
+from nltk.corpus import stopwords
+from nltk.stem import WordNetLemmatizer
+
+
+lemmatizer = WordNetLemmatizer()
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
+stopwords = set(stopwords.words('english'))
+
 
 """
 NOTES:
@@ -24,24 +36,34 @@ df = pd.read_csv(path_img_data, nrows=nrows)
 
 df = df[['subreddit', 'submission_title']]
 
-nlp = spacy.load('en', disable=['ner'])
+#nlp = spacy.load('en', disable=['ner'])
 
 # only subreddits with > min_posts posts:
 top_subreddits = df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()
 print(top_subreddits)
 df_top = df.loc[df.subreddit.isin(top_subreddits)]
 
-def lemmatizer(string):
+# def lemmatize(string):
+#     lst = []
+#     doc = nlp(string)
+#     for token in doc:
+#         if not token.is_stop and token.is_alpha and token.lemma_ != '-PRON-':  # TODO: fix, dirty!
+#             lst.append(token.lemma_)
+#
+#     return lst
+
+def lemmatize(string):  # nltk lemmatizer
     lst = []
-    doc = nlp(string)
+    doc = word_tokenize(string)
     for token in doc:
-        if not token.is_stop and token.is_alpha and token.lemma_ != '-PRON-':  # TODO: fix, dirty!
-            lst.append(token.lemma_)
+        if token not in stopwords and token.isalpha():
+            lemma = lemmatizer.lemmatize(token)
+            lst.append(lemma.lower())
 
     return lst
 
 print('Lemmatizing...')
-submission_titles = df_top['submission_title'].apply(lemmatizer)  # 1 min for 10k sentences!!
+submission_titles = df_top['submission_title'].apply(lemmatize)  # 1 min for 10k sentences!!
 df_top['submission_title'] = submission_titles
 
 # top N most common keywords per subreddit:
