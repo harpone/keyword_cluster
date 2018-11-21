@@ -24,7 +24,7 @@ df = pd.read_csv(path_img_data, nrows=nrows)
 
 df = df[['subreddit', 'submission_title']]
 
-nlp = spacy.load('en')
+nlp = spacy.load('en', disable=['ner'])
 
 # only subreddits with > min_posts posts:
 top_subreddits = df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()

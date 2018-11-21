@@ -22,15 +22,14 @@ vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
 # TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
-# TODO: predict
 # TODO: script for building embedding lookup table and testing with post input text
 # TODO: CLI instead of hard coded args
 # TODO: count vector normalization?
 
 #### Hyperparameters:
 run_name = 'testrun_smthn'
-hidden_size = 256
-layers = 10
+hidden_size = 512
+layers = 5
 lr = 3e-4
 batch_size = 64
 seed = 1  # numpy seed for train/val split
