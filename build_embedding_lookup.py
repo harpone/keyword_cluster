@@ -1,23 +1,17 @@
 import torch
-import torch.optim as optim
-import torch.nn as nn
 import numpy as np
-import os
+import pandas as pd
 from os.path import join
-import shutil
 import matplotlib.pyplot as plt
-import torch.nn.functional as F
-import itertools
 import json
-from tensorboardX import SummaryWriter
-from torch.utils.data import DataLoader, TensorDataset
+from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SequentialSampler
 
 from models import ResNetFC
 from datasets import RedditDataset
 
 # parameters:
-batch_size = 128
+batch_size = 128  # can be quite big, this is just for testing
 
 """
 Load a trained model, push dataset through it and save the embeddings together with the X, Y
@@ -32,6 +26,7 @@ hparams = json.loads(open(save_path).read())
 # Define and load model:
 model = ResNetFC(input_size=hparams['input_size'],
                  hidden_size=hparams['hidden_size'],
+                 embedding_size=hparams['embedding_size'],
                  layers=hparams['layers'],
                  output_size=hparams['output_size']).cuda()
 model.load_state_dict(torch.load(join(save_path, 'model.pth')))
@@ -47,10 +42,24 @@ loader = torch.utils.data.DataLoader(dataset,
                                      sampler=sampler,
                                      num_workers=8)
 
-# Loop through entire dataset:  # TODO make sure that really in correct order!
-hs_all = []
+# Loop through entire dataset in minibatches:  # TODO make sure that really correctly aligned!
+# TODO: now includes both train and val set... final model version should prolly be trained with entire dataset
+embeddings = []
 for xs, ys in loader:
     xs = xs.cuda()
-    _, hs = model(xs)
-    hs_all.append(hs.detach().cpu().numpy())
+    _, embedding = model(xs)  # shape [batch_size, embedding_size]
+    embedding = embedding.detach().cpu().numpy()
+    embeddings.append(embedding)
+
+embeddings = np.concatenate(embeddings, axis=0)  # [len(dataset), embedding_size]# TODO: catches the last different size mb?
+
+# Load actual dataframe:
+df = pd.read_csv(data_path)
+df['embeddings'] = embedding
+
+# Save embedded dataset:
+df.to_csv(join(save_path, 'img_reddits_embedded.csv'), index=False)
+
+
+
 

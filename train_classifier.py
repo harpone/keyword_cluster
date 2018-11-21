@@ -85,6 +85,7 @@ writer = SummaryWriter(save_path)
 # Save hyperparameters:
 hparams = dict(input_size=dataset.vocabulary_size,
                hidden_size=hidden_size,
+               embedding_size=embedding_size,
                layers=layers,
                output_size=dataset.num_labels,
                data_path=data_path,

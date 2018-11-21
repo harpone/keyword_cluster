@@ -9,7 +9,6 @@ class ResNetFC(nn.Module):
 
     """
 
-    # TODO: maybe not optimal to use the layer right before the logit as the embedding... maybe a bottleneck layer?
     # or multiple layers => hierarchical similarity
     def __init__(self,
                  input_size=1,
