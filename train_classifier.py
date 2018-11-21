@@ -19,15 +19,13 @@ data_path = '/mnt/TERA/Data/reddit_topics/img_reddits_processed.csv'
 vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
-# TODO: create large dataset and train
+# TODO: validation set + loss, acc, dice
+# TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
+# TODO: maybe Dice score; check imbalance
 # TODO: predict
 # TODO: script for building embedding lookup table and testing with post input text
-# TODO: validation... or just tons of data
-# TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
 # TODO: CLI instead of hard coded args
 # TODO: count vector normalization?
-# TODO: maybe Dice score; check imbalance
-# TODO: validation set + loss, acc, dice
 
 
 #### Hyperparameters:

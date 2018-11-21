@@ -7,13 +7,14 @@ import spacy
 
 """
 NOTES:
-- 1M first posts have 6223 unique subreddits
+- 1M first posts: number of subreddits with > 100 posts = 62
+- 10M first posts: number of subreddits with > 100 posts = 273; about 500k posts
 """
 
 
 min_posts = 100  # include only subreddits with at least this many posts in the training dataset
 n_keywords = 10  # how many most recurring keywords to keep per subreddit
-nrows = 1000000
+nrows = 10000000
 
 path_root = '/mnt/TERA/Data/reddit_topics'
 path_img_data = join(path_root, 'img_reddits.csv')
@@ -22,8 +23,6 @@ print('Loading data...')
 df = pd.read_csv(path_img_data, nrows=nrows)
 
 df = df[['subreddit', 'submission_title']]
-df_orig = df.copy()
-
 
 nlp = spacy.load('en')
 
@@ -40,12 +39,11 @@ def lemmatizer(string):
 # only subreddits with > min_posts posts:
 top_subreddits = df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()
 print(top_subreddits)
+df_top = df.loc[df.subreddit.isin(top_subreddits)]
 
 print('Lemmatizing...')
-submission_titles = df['submission_title'].apply(lemmatizer)  # 1 min for 10k sentences!!
-df['submission_title'] = submission_titles
-
-df_top = df.loc[df.subreddit.isin(top_subreddits)]
+submission_titles = df_top['submission_title'].apply(lemmatizer)  # 1 min for 10k sentences!!
+df_top['submission_title'] = submission_titles
 
 # top N most common keywords per subreddit:
 top_kws = df_top.groupby('subreddit').sum()
