@@ -22,10 +22,9 @@ vocabulary_path = './vocabulary.json'
 label_dict_path = './label_dict.json'
 
 # TODO: maybe actually combine `build_embedding_lookup` and `find_similar` s.t. will build embeddings if build=True?
-# TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
 # TODO: CLI instead of hard coded args
 # TODO: count vector normalization?
-# TODO: lemmatizer etc to "utils" or whatever
+# TODO: clean up elmo stuff
 
 #### Hyperparameters:
 run_name = 'testrun_smthn'

@@ -3,70 +3,46 @@ import matplotlib.pyplot as plt
 import pandas as pd
 from os.path import join
 import json
-import spacy
 import nltk
 from nltk.tokenize import sent_tokenize, word_tokenize
 from nltk.corpus import stopwords
 from nltk.stem import WordNetLemmatizer
+
+from utils import Lemmatizer
 
 """
 NOTES:
 - 1M first posts: number of subreddits with > 100 posts = 62
 - 10M first posts: number of subreddits with > 100 posts = 273; about 500k posts
 """
-# TODO: top k words is now the bottleneck!
+
 min_posts = 100  # include only subreddits with at least this many posts in the training dataset
 n_keywords = 10  # how many most recurring keywords to keep per subreddit
-nrows = 10000
+nrows = 1000000
 
 path_root = '/mnt/TERA/Data/reddit_topics'
 output_filename = 'img_reddits_processed_1M.csv'
 path_img_data = join(path_root, 'img_reddits.csv')
-
-# Lemmatizer stuff:
-lemmatizer = WordNetLemmatizer()
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
-stopwords = set(stopwords.words('english'))
 
 print('Loading data...')
 df = pd.read_csv(path_img_data, nrows=nrows)
 
 df = df[['subreddit', 'submission_title']]
 
-#nlp = spacy.load('en', disable=['ner'])
-
 # only subreddits with > min_posts posts:
 top_subreddits = df['subreddit'].loc[(df['subreddit'].value_counts() > min_posts).values].unique()
 print(top_subreddits)
 df_top = df.loc[df.subreddit.isin(top_subreddits)]
 
-# def lemmatize(string):
-#     lst = []
-#     doc = nlp(string)
-#     for token in doc:
-#         if not token.is_stop and token.is_alpha and token.lemma_ != '-PRON-':  # TODO: fix, dirty!
-#             lst.append(token.lemma_)
-#
-#     return lst
-
-def lemmatize(string):  # nltk lemmatizer
-    lst = []
-    doc = word_tokenize(string)
-    for token in doc:
-        if token not in stopwords and token.isalpha():
-            lemma = lemmatizer.lemmatize(token)
-            lst.append(lemma.lower())
-
-    return lst
+# Instatiate lemmatizer:
+lemmatizer = Lemmatizer()
 
 print('Lemmatizing...')
-submission_titles = df_top['submission_title'].apply(lemmatize)  # 1 min for 10k sentences!!
+submission_titles = df_top['submission_title'].apply(lemmatizer)
 df_top['submission_title'] = submission_titles
 
 # top N most common keywords per subreddit:
-top_kws = df_top.groupby('subreddit').sum()  # slooow!
+top_kws = df_top.groupby('subreddit').sum()  # TODO slooow!
 
 # Collect top words per subreddit and total:
 def count_words(lst_of_strs, top_n=10):

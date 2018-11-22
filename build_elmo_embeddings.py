@@ -31,9 +31,6 @@ options_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_1
 weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5"
 model = ElmoEmbedder(options_file, weight_file, 0)
 
-# Load hyperparameters:
-hparams = json.loads(open(join(save_path, 'hparams.json')).read())
-
 # Load dataset: (this will ensure we will process the data exactly as during training)
 df = pd.read_csv(data_path, nrows=nrows)
 df = df[['subreddit', 'submission_title']]
