@@ -16,7 +16,7 @@ from utils import Lemmatizer
 
 # parameters:
 batch_size = 256  # can be quite big, this is just for testing
-nrows = 1000000  # debugging with a small number
+nrows = 100000  # testing with a small number
 
 """
 Load a trained model, push dataset through it and save the embeddings together with the X, Y
