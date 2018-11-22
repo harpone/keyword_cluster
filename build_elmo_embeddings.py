@@ -14,11 +14,10 @@ from allennlp.commands.elmo import ElmoEmbedder
 from allennlp.modules.elmo import Elmo, batch_to_ids
 
 from datasets import RedditDataset
-from create_vocabulary import lemmatize
 
 # parameters:
-batch_size = 128  # can be quite big, this is just for testing
-nrows = 100000  # debugging with a small number
+batch_size = 256  # can be quite big, this is just for testing
+nrows = 1000000  # debugging with a small number
 
 """
 Load a trained model, push dataset through it and save the embeddings together with the X, Y
@@ -28,9 +27,9 @@ Load a trained model, push dataset through it and save the embeddings together w
 save_path = 'results/testrun_smthn'
 data_path = '/mnt/TERA/Data/reddit_topics/img_reddits.csv'
 
-# Load ELMo:
-options_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_options.json"
-weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x4096_512_2048cnn_2xhighway/elmo_2x4096_512_2048cnn_2xhighway_weights.hdf5"
+# Load ELMo (small):
+options_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_options.json"
+weight_file = "https://s3-us-west-2.amazonaws.com/allennlp/models/elmo/2x1024_128_2048cnn_1xhighway/elmo_2x1024_128_2048cnn_1xhighway_weights.hdf5"
 model = ElmoEmbedder(options_file, weight_file, 0)
 
 # Load hyperparameters:
@@ -47,6 +46,7 @@ nltk.download('punkt')
 nltk.download('wordnet')
 stopwords = set(stopwords.words('english'))
 
+
 def lemmatize(string):  # nltk lemmatizer
     lst = []
     doc = word_tokenize(string)
@@ -57,6 +57,7 @@ def lemmatize(string):  # nltk lemmatizer
 
     return lst
 
+
 embeddings = []
 masks = []
 idx_mbs = np.array_split(np.arange(len(df)), len(df) // batch_size)
@@ -64,19 +65,18 @@ for idx in idx_mbs:
     sentence_mb = list(df['submission_title'].loc[idx].values)  # list of strs
     sentence_mb = [lemmatize(sentence) for sentence in sentence_mb]
     activations, masks = model.batch_to_embeddings(sentence_mb)  # shape [batch_size, embedding_size]
-    # pick last non-masked activation as the embedding:
+    # pick last non-masked activation as the embedding (may not be optimal):
     last_timesteps = np.sum(masks.cpu().numpy(), axis=1) - 1
-    embedding = activations[:, 2, last_timesteps, :]  # TODO: working up to here
+    embedding = activations[np.arange(len(last_timesteps)), 2, last_timesteps, :]
 
     embeddings.append(embedding)
 
 embeddings = np.concatenate(embeddings, axis=0)  # [len(dataset), embedding_size]# TODO: catches the last different size mb?
-
-
-df['embeddings'] = embedding
+df_emb = pd.DataFrame(embeddings)
+df = pd.concat([df, df_emb], axis=1)
 
 # Save embedded dataset:
-df.to_csv(join(save_path, 'img_reddits_embedded.csv'), index=False)
+df.to_csv(join(save_path, 'img_reddits_elmo_embeddings.csv'), index=False)
 
 
 
