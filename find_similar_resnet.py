@@ -4,7 +4,7 @@ import pandas as pd
 from os.path import join
 import matplotlib.pyplot as plt
 import json
-from annoy import AnnoyIndex  # TODO: getting red in pycharm?!?
+from annoy import AnnoyIndex
 
 from datasets import RedditDataset
 from models import ResNetFC
@@ -12,6 +12,7 @@ from models import ResNetFC
 """
 Load saved model, take user input and find similar reddit topics based on similarity in embedding space.
 """
+# TODO: WARNING -- JUST A DRAFT, WORK IN PROGRESS!
 # TODO: Annoy documentation is... annoying
 # TODO: maybe keep process running and keep asking for user input instead of loading the embeddings every time?
 

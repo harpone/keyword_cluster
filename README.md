@@ -1,6 +1,18 @@
 # Similarity search for Reddit topics
 
-Idea is to train a classifier to predict the subreddit based on the 
+**WARNING**: this is very much a work in progress. The ELMo 
+embeddings and the similarity search work fine, but I was having
+lots of trouble gitting a decent sized dataset for the ResNet and
+just didn't have enough time to optimize the data processing.
+Also probably has lots of bugs!
+
+I won't have time to work on this anymore this week (spent around
+16 hours on it already), so I'll just leave it for The Judgement
+as it is now...
+
+
+## Rough idea:
+The idea is to train a classifier to predict the subreddit based on the 
 title text, and then to use the classifier's near-top 
 layer as an embedding and to measure similarity between titles
 by nearest neighbor distance in the embedding space.
@@ -19,14 +31,23 @@ resnet classifier.
  
 # Instructions
 
-
-* run `extract_image_posts.py` to get only posts containing links to images
+## ResNet model:
+* run `extract_image_posts.py` to get only posts containing 
+links to images
 * then `create_vocabulary.py` will dump the vocabulary and label dictionary as json files to project root
 * then `train_classifier.py`
 * then run `build_embedding_lookup.py`, which will include the 
 embedding vectors in the dataset (NOT DONE YET)
 * then run `find_similar.py` to find top-n most similar posts
 (NOT DONE YET)
+
+## ELMo model:
+* run `extract_image_posts.py` to get only posts containing 
+links to images
+* run `build_elmo_embeddings.py`. This will concat the dataset
+with the ELMo embeddings and save it
+* run `find_similar_elmo.py`. This will find closest match to
+the user given query based on the ELMo embedding vectors
 
 # Notes
 * the `RedditDataset` does lemmatization (with spacy) on the fly,
