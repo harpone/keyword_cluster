@@ -12,7 +12,7 @@ from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SequentialSampler
 from allennlp.commands.elmo import ElmoEmbedder
 
-from datasets import RedditDataset
+from utils import Lemmatizer
 
 # parameters:
 batch_size = 256  # can be quite big, this is just for testing
@@ -38,34 +38,15 @@ hparams = json.loads(open(join(save_path, 'hparams.json')).read())
 df = pd.read_csv(data_path, nrows=nrows)
 df = df[['subreddit', 'submission_title']]
 
-# Lemmatizer stuff:
-lemmatizer = WordNetLemmatizer()
-nltk.download('stopwords')
-nltk.download('punkt')
-nltk.download('wordnet')
-stopwords = set(stopwords.words('english'))
-
-
-def lemmatize(string):  # nltk lemmatizer
-    lst = []
-    try:
-        doc = word_tokenize(string)
-    except TypeError:
-        doc = word_tokenize(str(string))
-    for token in doc:
-        if token not in stopwords and token.isalpha():
-            lemma = lemmatizer.lemmatize(token)
-            lst.append(lemma.lower())
-
-    return lst
-
+# Instatiate lemmatizer:
+lemmatizer = Lemmatizer()
 
 embeddings = []
 masks = []
 idx_mbs = np.array_split(np.arange(len(df)), len(df) // batch_size)
 for idx in idx_mbs:
     sentence_mb = list(df['submission_title'].loc[idx].values)  # list of strs
-    sentence_mb = [lemmatize(sentence) for sentence in sentence_mb]
+    sentence_mb = [lemmatizer(sentence) for sentence in sentence_mb]
     activations, masks = model.batch_to_embeddings(sentence_mb)  # shape [batch_size, embedding_size]
     # pick last non-masked activation as the embedding (may not be optimal):
     last_timesteps = np.sum(masks.cpu().numpy(), axis=1) - 1
@@ -73,7 +54,7 @@ for idx in idx_mbs:
 
     embeddings.append(embedding)
 
-embeddings = np.concatenate(embeddings, axis=0)  # [len(dataset), embedding_size]# TODO: catches the last different size mb?
+embeddings = np.concatenate(embeddings, axis=0)
 df_emb = pd.DataFrame(embeddings)
 df = pd.concat([df, df_emb], axis=1)
 

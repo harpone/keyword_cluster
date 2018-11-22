@@ -12,6 +12,8 @@ from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SequentialSampler
 from allennlp.commands.elmo import ElmoEmbedder
 
+from utils import Lemmatizer
+
 
 """
 Load saved model, take user input and find similar reddit topics based on similarity in embedding space.
@@ -35,7 +37,8 @@ df = pd.read_csv(embeddings_path)
 embeddings = df.embeddings  # [len(dataset), 256]
 
 # Process query:
-
+lemmatizer = Lemmatizer()
+x_query = lemmatizer(query)
 
 
 # Find nearest neighbors:
