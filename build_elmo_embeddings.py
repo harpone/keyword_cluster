@@ -49,7 +49,10 @@ stopwords = set(stopwords.words('english'))
 
 def lemmatize(string):  # nltk lemmatizer
     lst = []
-    doc = word_tokenize(string)
+    try:
+        doc = word_tokenize(string)
+    except TypeError:
+        doc = word_tokenize(str(string))
     for token in doc:
         if token not in stopwords and token.isalpha():
             lemma = lemmatizer.lemmatize(token)

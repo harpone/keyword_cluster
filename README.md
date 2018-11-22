@@ -32,7 +32,8 @@ in the debugger and 2) the dataset's `.vectorize` method can be
 used also in the nn search phase
 * Warning: `allennlp` seems to screw up stuff, such as matplotlib
 imports and it requires certain versions of other packages...
-* ELMo embeddings are high dimensional (1024), so I don't expect
-the NN search to be very good for similarity search...
+* ELMo embeddings are quite high dimensional (256 for small model), 
+so I don't expect the NN search to be very good for similarity 
+search...
 * Instead of using the last layer, last activation as the embedding
 in ELMo, e.g. avg pool or multiple layers might make sense

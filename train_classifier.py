@@ -25,6 +25,7 @@ label_dict_path = './label_dict.json'
 # TODO: check dataset balance. acc probably a bad measure of performance! Maybe balanced sampling
 # TODO: CLI instead of hard coded args
 # TODO: count vector normalization?
+# TODO: lemmatizer etc to "utils" or whatever
 
 #### Hyperparameters:
 run_name = 'testrun_smthn'
