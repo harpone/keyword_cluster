@@ -55,7 +55,7 @@ def main(data_path=None,
     df = pd.concat([df, df_emb], axis=1)
 
     # Save embedded dataset:
-    df.to_csv(join(save_path, 'img_reddits_elmo_embeddings.csv'), index=False)
+    df.to_csv(join(save_path, 'elmo_embeddings.csv'), index=False)
 
 
 if __name__ == '__main__':

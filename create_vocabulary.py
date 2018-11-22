@@ -106,6 +106,7 @@ def main(min_posts=None,
 
     print('done.')
 
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Create vocabulary for the resnet model')
     parser.add_argument('-min_posts',
@@ -116,13 +117,13 @@ if __name__ == '__main__':
                         default=10)
     parser.add_argument('-nrows',
                         help='number of rows to use in the dataset (yeah, a bit crappy)',
-                        default=1000000)
+                        default=100000)
     parser.add_argument('-data_path',
                         help='Path to the dataset (CSV file)',
                         default='./img_reddits.csv')
     parser.add_argument('-out_filename',
                         help='Path to output processed dataset',
-                        default='./img_reddits_processed_1M.csv')
+                        default='./img_reddits_processed_100k.csv')
     args = parser.parse_args()
 
     main(**vars(args))
