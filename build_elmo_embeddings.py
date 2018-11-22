@@ -11,7 +11,6 @@ from nltk.stem import WordNetLemmatizer
 from torch.utils.data import DataLoader
 from torch.utils.data.sampler import SequentialSampler
 from allennlp.commands.elmo import ElmoEmbedder
-from allennlp.modules.elmo import Elmo, batch_to_ids
 
 from datasets import RedditDataset
 
@@ -80,7 +79,5 @@ df = pd.concat([df, df_emb], axis=1)
 
 # Save embedded dataset:
 df.to_csv(join(save_path, 'img_reddits_elmo_embeddings.csv'), index=False)
-
-
 
 
