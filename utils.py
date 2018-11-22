@@ -22,6 +22,11 @@ class Lemmatizer:
         self.stopwords = set(stopwords.words('english'))
 
     def __call__(self, string):
+        """
+
+        :param string:
+        :return: list of lemmatized, lowercase strings with only alphanumeric words
+        """
         lst = []
         try:
             doc = word_tokenize(string)

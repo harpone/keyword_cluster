@@ -1,6 +1,7 @@
 import torch
 import numpy as np
 import pandas as pd
+import os
 from os.path import join
 import matplotlib.pyplot as plt
 import json
@@ -38,14 +39,26 @@ embeddings = df.embeddings  # [len(dataset), 256]
 
 # Process query:
 lemmatizer = Lemmatizer()
-x_query = lemmatizer(query)
-
+query_lemmatized = lemmatizer(query)
+query_embedding = model.embed_sentence(query_lemmatized)  # [256, ]
 
 # Find nearest neighbors:
+annoy_index_path = join(save_path, 'annoy_index.ann')
 nn_index = AnnoyIndex(len(embeddings))
-nn_index.build(10)
+if not os.path.exists(annoy_index_path):  # create the index and save
+    # damn I guess I need to loop over the dataset to add items...
+    for i, emb in enumerate(embeddings):
+        nn_index.add_item(i, emb)
+
+    nn_index.build(10)
+    nn_index.save(annoy_index_path)
+
+else:  # load pre-existing index
+    nn_index = AnnoyIndex(len(embeddings))
+    nn_index.load(annoy_index_path)
+
 # TODO: maybe save and/or load if exists; check speed
-nns, distances = nn_index.get_nns_by_vector(x_query, n_neighbors, search_k=-1, include_distances=True)  # TODO: check usage and shapes
+nns, distances = nn_index.get_nns_by_vector(query_embedding, n_neighbors, search_k=-1, include_distances=True)  # TODO: check usage and shapes
 df_nns = df[['subreddit', 'submission_title']].loc[nns]
 
 print(df_nns.to_string())  # TODO: print distances?
