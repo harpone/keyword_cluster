@@ -10,6 +10,8 @@ from torch.utils.data.sampler import SequentialSampler
 from models import ResNetFC
 from datasets import RedditDataset
 
+# TODO: WARNING -- JUST A DRAFT, WORK IN PROGRESS!
+
 # parameters:
 batch_size = 128  # can be quite big, this is just for testing
 

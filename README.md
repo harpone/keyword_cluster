@@ -50,7 +50,7 @@ with the ELMo embeddings and save it
 the user given query based on the ELMo embedding vectors
 
 # Notes
-* the `RedditDataset` does lemmatization (with spacy) on the fly,
+* the `RedditDataset` does lemmatization on the fly,
 which can be a bit slow... the point with this is that 1) it makes
 dataset issues easy to debug by seeing the actual text/labels e.g.
 in the debugger and 2) the dataset's `.vectorize` method can be
