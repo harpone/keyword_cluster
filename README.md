@@ -6,9 +6,6 @@ lots of trouble gitting a decent sized dataset for the ResNet and
 just didn't have enough time to optimize the data processing.
 Also probably has lots of bugs!
 
-I won't have time to work on this anymore this week (spent around
-16 hours on it already), so I'll just leave it for The Judgement
-as it is now...
 
 
 ## Rough idea:
